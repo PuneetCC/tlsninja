@@ -35,13 +35,15 @@ type HTTPClient struct {
 	Client            cycletls.CycleTLS
 	AdditionalHeaders map[string]string
 	JA3Fingerprint    string
+	ProxyProvider     *func(url string) string
 }
 
-func NewHTTPClient(ctx context.Context, ja3 string) *HTTPClient {
+func NewHTTPClient(ctx context.Context, ja3 string, proxyProvider *func(url string) string) *HTTPClient {
 	return &HTTPClient{
 		Context:        ctx,
 		Client:         cycletls.CycleTLS{},
 		JA3Fingerprint: ja3,
+		ProxyProvider:  proxyProvider,
 	}
 }
 
@@ -86,6 +88,11 @@ func (h *HTTPClient) Request(config RequestConfig) (*HTTPClientResponse, error) 
 		Ja3:     h.JA3Fingerprint,
 		Headers: headers,
 		Timeout: config.Timeout,
+	}
+
+	if h.ProxyProvider != nil {
+		provider := *h.ProxyProvider
+		options.Proxy = provider(finalURL)
 	}
 
 	// Retry logic
