@@ -2,7 +2,6 @@ package tlsninja
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -34,9 +33,6 @@ func (p *LambdaRequest) Do(config IRequestConfig) (*IRequestResponse, error) {
 		return nil, err
 	}
 
-	fmt.Println(config)
-
-	fmt.Println(string(payload))
 	result, err := p.Client.Invoke(&lambda.InvokeInput{
 		FunctionName: &p.Function,
 		Payload:      payload,
