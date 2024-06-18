@@ -95,6 +95,10 @@ func (h *HTTPClient) Request(config RequestConfig) (*HTTPClientResponse, error) 
 		options.Proxy = provider(finalURL)
 	}
 
+	if userAgent, ok := headers["User-Agent"]; ok {
+		options.UserAgent = userAgent
+	}
+
 	// Retry logic
 	var resp cycletls.Response
 	var err error
