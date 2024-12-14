@@ -8,6 +8,7 @@ type IRequestConfig struct {
 	Headers        map[string]string `json:"headers"`
 	Timeout        int               `json:"timeout"`
 	JA3Fingerprint string            `json:"ja3"`
+	SkipRedirects  bool              `json:"skipRedirects"`
 }
 
 type IRequestResponse struct {
