@@ -11,15 +11,16 @@ import (
 )
 
 type RequestConfig struct {
-	Method      string
-	URL         string
-	QueryParams map[string]string
-	Payload     []byte
-	Headers     map[string]string
-	Timeout     int
-	MaxRetries  int
-	RetryDelay  time.Duration
-	RetryableFn func(*cycletls.Response, error) bool
+	Method        string
+	URL           string
+	QueryParams   map[string]string
+	Payload       []byte
+	Headers       map[string]string
+	Timeout       int
+	MaxRetries    int
+	RetryDelay    time.Duration
+	RetryableFn   func(*cycletls.Response, error) bool
+	SkipRedirects bool `json:"skipRedirects"`
 }
 
 type HTTPClientResponse struct {
@@ -88,6 +89,10 @@ func (h *HTTPClient) Request(config RequestConfig) (*HTTPClientResponse, error) 
 		Ja3:     h.JA3Fingerprint,
 		Headers: headers,
 		Timeout: config.Timeout,
+	}
+
+	if config.SkipRedirects {
+		options.DisableRedirect = config.SkipRedirects
 	}
 
 	if h.ProxyProvider != nil {

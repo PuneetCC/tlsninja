@@ -1,6 +1,8 @@
 module github.com/PuneetCC/tlsninja
 
-go 1.20
+go 1.21
+
+toolchain go1.23.1
 
 require (
 	github.com/Danny-Dasilva/CycleTLS/cycletls v1.0.26

@@ -22,12 +22,13 @@ func (p *ProxyRequest) Do(config IRequestConfig) (*IRequestResponse, error) {
 	}
 
 	resp, err := client.Request(RequestConfig{
-		Method:      config.Method,
-		URL:         config.URL,
-		QueryParams: config.QueryParams,
-		Payload:     config.Payload,
-		Headers:     config.Headers,
-		Timeout:     config.Timeout,
+		Method:        config.Method,
+		URL:           config.URL,
+		QueryParams:   config.QueryParams,
+		Payload:       config.Payload,
+		Headers:       config.Headers,
+		Timeout:       config.Timeout,
+		SkipRedirects: config.SkipRedirects,
 	})
 
 	if err != nil {
