@@ -1,6 +1,7 @@
 package tlsninja
 
 import (
+	"encoding/hex"
 	"encoding/json"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -47,9 +48,21 @@ func (p *LambdaRequest) Do(config IRequestConfig) (*IRequestResponse, error) {
 		return nil, err
 	}
 
-	return &IRequestResponse{
+	response := IRequestResponse{
 		StatusCode: lambdaResponse.StatusCode,
-		Body:       []byte(lambdaResponse.Body),
 		Headers:    lambdaResponse.Headers,
-	}, nil
+	}
+
+	if v, ok := config.Headers["accept"]; ok && v == "application/x-protobuf" {
+		hexBody, err := hex.DecodeString(lambdaResponse.Body)
+		if err != nil {
+			response.Body = []byte(lambdaResponse.Body)
+		} else {
+			response.Body = hexBody
+		}
+	} else {
+		response.Body = []byte(lambdaResponse.Body)
+	}
+
+	return &response, nil
 }
