@@ -29,6 +29,7 @@ func NewLambdaRequest(function, region string) LambdaRequest {
 }
 
 func (p *LambdaRequest) Do(config IRequestConfig) (*IRequestResponse, error) {
+	config.HexEncodedResponse = true
 	payload, err := json.Marshal(config)
 	if err != nil {
 		return nil, err
@@ -53,7 +54,14 @@ func (p *LambdaRequest) Do(config IRequestConfig) (*IRequestResponse, error) {
 		Headers:    lambdaResponse.Headers,
 	}
 
-	if v, ok := config.Headers["accept"]; ok && v == "application/x-protobuf" {
+	if config.HexEncodedResponse {
+		hexBody, err := hex.DecodeString(lambdaResponse.Body)
+		if err != nil {
+			response.Body = []byte(lambdaResponse.Body)
+		} else {
+			response.Body = hexBody
+		}
+	} else if v, ok := config.Headers["accept"]; ok && v == "application/x-protobuf" {
 		hexBody, err := hex.DecodeString(lambdaResponse.Body)
 		if err != nil {
 			response.Body = []byte(lambdaResponse.Body)
